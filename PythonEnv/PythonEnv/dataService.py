@@ -9,12 +9,23 @@ import os
 credentials = service_account.Credentials.from_service_account_file('serviceAccount.json')
 db = gc.Client('tfgpablo-e55fb', credentials)
 
+def getAllAlgorithm():
+    return db.collection('algoritmos')
+
+def getAllModels():
+    return db.collection('modelos')
+
 def findAlgoritmo(id):
     return db.collection('algoritmos').document(id).get().to_dict()
 
-
 def findModelo(id):
     return db.collection('modelos').document(id).get().to_dict()
+
+def findImage(id):
+    return db.collection('images').document(id).get().to_dict()
+
+def findImageByName(name):
+    return db.collection('images').where("name", "==", name).limit(1)
 
 
 def saveArchivo(file, folderPath):
@@ -39,3 +50,10 @@ def saveModeloBD(nombre):
         'nombre' : nombre
     }
     db.collection('modelos').document().set(content)
+
+#No en uso ahora mismo
+def saveImageDB(name):
+    content = {
+        'name' : name
+    }
+    db.collection('images').document().set(content)
