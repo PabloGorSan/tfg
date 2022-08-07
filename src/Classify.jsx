@@ -2,9 +2,12 @@ import { Fragment, useState, useRef } from "react";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import Image from 'react-bootstrap/Image'
 import useFetch from "./components/useFetch";
-import { ModelList, ModelListClassify } from "./components/ModelList";
+import { ClassifierList } from "./components/ClassifierList";
+import {useNavigate} from "react-router-dom"
 
 export default function Classify() {
+
+    const navigate = useNavigate()
 
     const [selectedImage, setSelectedImage] = useState()
 	const [isImagePicked, setIsImagePicked] = useState(false)
@@ -15,7 +18,7 @@ export default function Classify() {
     const [classificationResult, setClassificationResult] = useState()
     const [isClassified, setIsClassified] = useState(false)
 
-    const { data: modelsFetch, errorModel, isPendingModel } = useFetch('http://127.0.0.1:5000/getAllModels')
+    const { data: modelsFetch, errorModel, isPendingModel } = useFetch('http://127.0.0.1:5000/findAllowedModels/'+localStorage['user']+"?forceValidated=true")
 
     const changeHandler = (event) => {
 		setSelectedImage(event.target.files[0]);
@@ -27,7 +30,7 @@ export default function Classify() {
 		setIsModelPicked(true)
 	};
 
-    const submitClassify = () => {
+    function submitClassify() {
         const formData = new FormData();
 		formData.append('image', selectedImage)
         formData.append('modelID', selectedModel.id)
@@ -40,7 +43,7 @@ export default function Classify() {
             }
         )
         .then(response => response.json())
-        .then(data => handleClassificationResult(data))
+        .then(data => navigate("/classDetails/"+data['classID'], {state:data}))
 
     }
 
@@ -74,7 +77,7 @@ export default function Classify() {
                     {isImagePicked && (
                         <div>
                             <h3>Select a model</h3>
-                            <ModelList models={modelsFetch} clickAction={changeModelHandler}/>
+                            <ClassifierList models={modelsFetch} clickAction={changeModelHandler}/>
                         </div>
                     )}
                     </Col>
@@ -83,9 +86,9 @@ export default function Classify() {
                     <Col>
                     {isModelPicked && (
                         <div>
-                            <h3>Selected model is {selectedModel.nombre}. Select your custom attributes</h3>
+                            <h3>Selected model is {selectedModel.name}. Select your custom attributes</h3>
                             <p>Click this button to begin the classification</p>
-                            <Button onClick={() => submitClassify()}>Classify</Button>
+                            <Button onClick={submitClassify}>Classify</Button>
                         </div>
                     )}
                     </Col>
