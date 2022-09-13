@@ -85,7 +85,7 @@ export default function CreateClasses(){
         <Fragment>
             <h1>Create the classes that your model returns</h1>
             {model['predictionFormat'] == 1 && 
-            <div>
+            <div className="create-name">
                 <b>Binary probability</b>
                 <p>Because this is a binary probability model, you have to describe two classes and the threshold that will be used to interpret your model output. If the model returns a value under that threshold, it will be cataloged as class 0. If the model returns a greater value, it will be cataloged as class 1.</p>
                 <Form.Group className="mb-3" controlId="threshold">

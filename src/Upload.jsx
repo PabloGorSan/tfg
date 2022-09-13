@@ -8,9 +8,6 @@ export default function Upload(){
 
     const navigate = useNavigate()
     
-    const [openModel, setOpenModel] = useState(false);
-    const [openAlg, setOpenAlg] = useState(false);
-
     const [modelFormData, setModelFormData] = useState(
         {
             name: "",
@@ -19,32 +16,22 @@ export default function Upload(){
             x: 0,
             y: 0,
             channel: 0,
-            predictionFormat: 0,
-            numberClasses: 0,
+            predictionFormat:0,
+            numberClasses:2,
             public: 0,
             trained: 0
         }
     )
 
-
     function handleChange(event) {
         const {name, value, type, files} = event.target
-        console.log(modelFormData)
-        if(openModel){
-            setModelFormData(prevModelFormData => {
-                return {
-                    ...prevModelFormData,
-                    [name]: type === "file" ? files : value
-                }
-            })
-        } else if(openAlg){
-            setModelFormData(prevModelFormData => {
-                return {
-                    ...prevModelFormData,
-                    [name]: type === "file" ? files[0] : value
-                }
-            })
-        }
+        setModelFormData(prevModelFormData => {
+            return {
+                ...prevModelFormData,
+                [name]: type === "file" ? files : value
+            }
+        })
+        
 
     }
     const handleSubmission = (event) => {
@@ -63,17 +50,12 @@ export default function Upload(){
         var requestURL = ""
         var nextURL = ""
 
-        if(openModel){
-            for (let i = 0; i < modelFormData['file'].length; i++) {
-                formData.append(`file[${i}]`, modelFormData['file'][i])
-            }
-            requestURL = "http://localhost:5000/uploadModel"
-            nextURL = "/model/"
-        } else if(openAlg){
-            formData.append('file', modelFormData['file'])
-            requestURL = "http://localhost:5000/uploadAlgorithm"
-            nextURL = "/algorithm/"
+        for (let i = 0; i < modelFormData['file'].length; i++) {
+            formData.append(`file[${i}]`, modelFormData['file'][i])
         }
+        requestURL = "http://localhost:5000/uploadModel"
+        nextURL = "/model/"
+
         fetch(requestURL,
             {
                 method: 'POST',
@@ -83,36 +65,6 @@ export default function Upload(){
         .then(data => navigate(nextURL+data['id']))
 	};
 
-    function funcOpenModel(){
-        setModelFormData({
-            name: "",
-            type: 0,
-            file: null,
-            x: 0,
-            y: 0,
-            channel: 0,
-            predictionFormat:0,
-            numberClasses:2,
-            public: 0,
-            trained: 0
-        })
-
-        setOpenModel(true)
-        setOpenAlg(false)
-    }
-    function funcOpenAlg(){
-        setModelFormData({
-            name: "",
-            type: 0,
-            file: null,
-            x: 0,
-            y: 0,
-            channel: 0
-        })
-
-        setOpenModel(false)
-        setOpenAlg(true)
-    }
 
     function nextStep(){
         navigate("/createClasses", {state:modelFormData})
@@ -120,31 +72,9 @@ export default function Upload(){
     return(
         <Fragment>
             <h2 className="mb-3">Upload a new Classifier</h2>
-            <Row className="mb-4">
-                <Col>
-                <Button
-                    onClick={() => funcOpenModel()}
-                    aria-controls="collapseModel"
-                    aria-expanded={openModel}
-                >
-                    Upload new Model
-                </Button>
-                </Col>
-                <Col>
-                <Button
-                    onClick={() => funcOpenAlg()}
-                    aria-controls="collapseAlg"
-                    aria-expanded={openAlg}
-                >
-                    Upload new Algorithm
-                </Button>
-                </Col>
-            </Row>
-            <Row>
-            <Collapse in={openModel}>
+            <div className="form-upload">
                 <Form>
                     <Row>
-                        
                         <Form.Group className="mb-3" controlId="modelName">
                             <Form.Label>Public model name</Form.Label>
                             <Form.Control name="name" onChange={handleChange} type="text"/>
@@ -233,63 +163,13 @@ export default function Upload(){
                                 value="1"
                             />   
                         </Form.Group>
-  
+
                         
                     </Row>
                     {modelFormData['trained'] == 0 && <Button onClick={handleSubmission}>Next</Button>}
                     {modelFormData['trained'] == 1 && <Button onClick={nextStep}>Next</Button>}
                 </Form>
-            </Collapse>
-            
-
-            <Collapse in={openAlg}>
-                <Form onSubmit={handleSubmission}>
-                    <Row>
-                        <Form.Group className="mb-3" controlId="algName">
-                            <Form.Label>Public algorithm name</Form.Label>
-                            <Form.Control name="name" onChange={handleChange} type="text"/>
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="algType">
-                            <Form.Label>Programming language</Form.Label>
-                            <Form.Select name="type" onChange={handleChange}>
-                                    <option>Select programming language</option>
-                                    <option value="1">Python</option>
-                                    <option value="2">Java</option>
-                            </Form.Select>
-                        </Form.Group> 
-                        <Form.Group className="mb-3" controlId="algFiles">
-                            <Form.Label>Algorithm</Form.Label>
-                            <Form.Control onChange={handleChange} type="file" name="file"/>
-                        </Form.Group>
-                        <Row>
-                        <Form.Label>Size of images accepted</Form.Label>
-                            <Col>
-                            <Form.Group className="mb-3" controlId="algXValue">
-                                <Form.Label>X</Form.Label>
-                                <Form.Control name="x" onChange={handleChange} type="number"/>
-                            </Form.Group>
-                            </Col>
-                            <Col>
-                            <Form.Group className="mb-3" controlId="algYValue">
-                                <Form.Label>Y</Form.Label>
-                                <Form.Control name="y" onChange={handleChange} type="number"/>
-                            </Form.Group>
-                            </Col>
-                        </Row>
-                        <Form.Group className="mb-3" controlId="algChannel">
-                            <Form.Label>Channel used</Form.Label>
-                            <Form.Select name="channel" onChange={handleChange}>
-                                <option>Select the channel</option>
-                                <option value="1">GrayScale</option>
-                                <option value="2">RGB</option>
-                                <option value="3">BGR</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Button variant="primary" type="submit">Upload</Button>
-                    </Row>
-                </Form>
-            </Collapse>
-            </Row>
+            </div>
         </Fragment>
     )
 }

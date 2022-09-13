@@ -28,7 +28,7 @@ export function ModelFilter(props){
         const formData = new FormData();
         formData.append('validated', filterFormData['validated'])
         formData.append('nonValidated', filterFormData['nonValidated'])
-        fetch("http://localhost:5000/filterAlgorithms",
+        fetch("http://localhost:5000/filterModels",
             {
                 method: 'POST',
                 body: formData,
@@ -42,19 +42,20 @@ export function ModelFilter(props){
             <Form onSubmit={handleSubmission}>
                 <Form.Check onChange={handleChange}
                 inline
-                label="Validated Algorithm"
+                label="Validated Models"
                 name="validated"
                 checked={filterFormData.validated}
                 />
                 <Form.Check onChange={handleChange}
                 inline
-                label="Non-Validated Algorithm"
+                label="Non-Validated Models"
                 name="nonValidated"
                 checked={filterFormData.nonValidated}
                 />
                 <Button variant="primary" type="submit">Apply</Button>
             </Form>
-            <ClassifierList models={listContent} clickAction={props.clickAction}></ClassifierList>
+            <br/>
+            <ClassifierList models={listContent} clickAction={props.clickAction} badge={props.badge}></ClassifierList>
         </div>
     )
 }

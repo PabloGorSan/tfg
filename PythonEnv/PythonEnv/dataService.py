@@ -48,6 +48,9 @@ def findImageByName(name):
 def findModelsByUid(uid):
     return db.collection('modelos').where("userID", "==", uid).stream()
 
+def findPublicModels():
+    return db.collection('modelos').where("public", "==", 1).stream()
+
 def findDataset(id):
     return db.collection('datasets').document(id).get().to_dict()
 
@@ -82,21 +85,8 @@ def downloadFile(id, folderPath):
     return send_from_directory(pathZip, "zip_"+id+".zip")
 
 
-def saveAlgorithmDB(filename, data):
-    content = {
-        'name' : data['name'],
-        'type' : int(data['type']),
-        'x' : int(data['x']),
-        'y' : int(data['y']),
-        'channel' : int(data['channel']),
-        'filename' : filename
-    }
-    doc = db.collection('algoritmos').document()
-    doc.set(content)
-    return doc.id
 
-
-def saveModelDB(data, threshold, classesIDs):
+def saveModelDB(data, count, datasets, threshold, classesIDs):
     
     content = {
         'name' : data['name'],
@@ -108,10 +98,12 @@ def saveModelDB(data, threshold, classesIDs):
         'numberClasses' : int(data['numberClasses']),
         'public': int(data['public']),
         'trained':int(data['trained']),
+        'count':int(count),
         'threshold' : float(threshold),
         'classesIDs' : classesIDs,
         'userID' : data['userID'],
-        'validated': False
+        'validated': False,
+        'datasets': datasets
     }
     doc = db.collection('modelos').document()
     doc.set(content)
@@ -139,8 +131,8 @@ def saveImageDB(name):
     }
     db.collection('images').document().set(content)
 
-def filterAlgorithms(data):
-    query = db.collection('algoritmos')
+def filterModels(data):
+    query = db.collection('modelos')
 
     docs = []
 

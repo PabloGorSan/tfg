@@ -1,0 +1,168 @@
+html {
+	min-height: 100%;
+	position: relative;
+  }
+  body {
+	margin: 0;
+	margin-bottom: 40px;
+  }
+  footer {
+	background-color: #212529;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 60px;
+	color: white;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-evenly;
+  }
+
+body {
+	background-color: #CFD8C550 !important;
+}
+
+#col p {
+	padding-top: 20px;
+}
+.landing {
+	display: flex;
+	align-items: center;
+	height:80vh;
+	width: 100%;
+}
+
+.icon-landing {
+	max-width: 90%;
+	filter:brightness(1.0);
+	mix-blend-mode:multiply;
+}
+
+#second-col {
+	text-align: center;
+}
+
+#rowlanding {
+	align-items: center;
+	margin-top: -45px;
+	
+}
+
+.btn-primary {
+    background-color: #CA233D !important;
+    border-color: #CA233D !important;
+}
+
+.nav-link {
+	font-size:1.25rem;
+}
+
+h1, h2, h3, h4, h5 {
+	line-height: 1.8em !important;
+}
+
+nav.mb-3.navbar.navbar-expand.navbar-dark.bg-dark {
+	margin-bottom: 45px !important;
+}
+
+div.buttonland {
+	margin-top: 45px;
+	margin-bottom: 45px;
+	text-align: center;
+}
+
+div.buttonland > .btn {
+	font-size: 20px !important;
+	width: 150px;
+	height: 50px;
+}
+
+#left-side-land {
+	border: 2px solid;
+	border-radius: 70px;
+	background-color: white;
+}
+
+.text-box h1 {
+	line-height: 1.5em !important;
+	margin-top: 10px;
+	font-size: 60px;
+}
+
+.text-box h3{
+	font-size: 28px;
+	font-weight: 400;
+}
+
+.text-box p{
+	font-size: 18px;
+	font-weight: 400;
+}
+
+#classify-container {
+	border: 2px solid;
+	border-radius: 10px;
+	background-color: white;
+}
+#classify-container p{
+	font-size: 20px;
+	font-weight: 400;
+	margin-bottom: 0px;
+	margin-top: 5px;
+}
+
+
+#classify-row {
+	margin-bottom: 10px;
+}
+
+.classificator-data{
+	border: 2px solid;
+	border-radius: 10px;
+	background-color: white;
+	list-style-position: inside;
+}
+
+.classificator-data li{
+	margin-left: 10px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.validate-button{
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+
+.validate-button p{
+	font-size: 20px;
+	font-weight: 400;
+}
+
+.form-upload {
+	border: 2px solid;
+	border-radius: 10px;
+	background-color: white;
+	padding: 15px;
+}
+
+.create-name {
+	font-size: 20px;
+	font-weight: 400;
+}
+
+.web-content p{
+	font-size: 20px;
+	font-weight: 400;
+}
+
+#listgroup-item {
+	max-width: 800px;
+}
+
+
+#badge-list {
+	float: right;
+}

@@ -8,7 +8,7 @@ from sklearn.metrics import roc_curve
 BATCH_SIZE = 64
 AUTO = tf.data.experimental.AUTOTUNE
 
-def trainModel(modelID, modelPath, savePath, imagesPath, trainPath, valPath, testPath):
+def trainModel(modelID, modelPath, imagesPath, trainPath, valPath, testPath):
 
     train = pd.read_csv(trainPath)
     val = pd.read_csv(valPath)
@@ -46,11 +46,10 @@ def trainModel(modelID, modelPath, savePath, imagesPath, trainPath, valPath, tes
     model.load_weights(filepath)
     results = model.evaluate(test_ds)
     history.history['evaluation'] = results
-    model.save(savePath)
 
     threshold = findThreshold(model, imagesPath, testPath)
 
-    return history.history, threshold
+    return model, history.history, threshold
 
 def findThreshold(model, imagesPath, testPath):
     test = pd.read_csv(testPath)

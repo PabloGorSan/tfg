@@ -1,8 +1,6 @@
 import { Fragment, useState } from "react";
-import {useNavigate, useLocation} from "react-router-dom"
 import {Form, Row, Col, Button, Collapse} from "react-bootstrap"
-import { useGlobalState } from "state-pool";
-import { PredictionClass } from "./PredictionClass";
+import Card from 'react-bootstrap/Card';
 
 export function ClassEditor({number, changeName, changeDesc}){
 
@@ -35,7 +33,12 @@ export function ClassEditor({number, changeName, changeDesc}){
             <Row>
                 <h2>Class {number}</h2>
                 <Col>
-                    <PredictionClass data={classFormData}/>
+                    <Card style={{ width: '18rem' }}>
+                    <Card.Body>
+                    <Card.Title>{classFormData['name']}</Card.Title>
+                    <Card.Text>{classFormData['description']}</Card.Text>
+                </Card.Body>
+            </Card>
                 </Col>
                 <Col>
                 <Form>
@@ -47,7 +50,6 @@ export function ClassEditor({number, changeName, changeDesc}){
                         <Form.Label>Description</Form.Label>
                         <Form.Control name="description" onChange={handleChange} type="text"/>
                     </Form.Group>
-                    <Form.Control type="file" name="image" accept="image/*" onChange={handleChange} />
                 </Form>
                 </Col>
             </Row>

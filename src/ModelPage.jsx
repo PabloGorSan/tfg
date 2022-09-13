@@ -7,6 +7,7 @@ import download from "downloadjs";
 import { LineChart } from "./components/LineChart";
 import { color, CHART_COLORS, transparentize } from "./components/Utils";
 import { DatasetList } from "./components/DatasetList"
+import { PredictionClassesList } from "./components/PredictionClassesList";
 
 export default function ModelPage(){
     
@@ -26,12 +27,6 @@ export default function ModelPage(){
         .then(blob =>{
           download(blob, 'model_'+ id +'.zip', 'application/zip');
         })
-    }
-
-    function mostrar(){
-        console.log(modelData['history']['evaluation'][1])
-        
-
     }
 
     function loadChart(){
@@ -82,19 +77,41 @@ export default function ModelPage(){
 
     return (
         <Fragment>
-        
         {modelData && userData && datasetsData &&
         <div>
-            <Button onClick={mostrar}>Mostrar</Button>
-            {modelData['history'] != null && <LineChart chartData={loadChart()} charOptions={options()}></LineChart>}
+            <Row>
+                <h1>{modelData['name']}</h1>
+                <Col>
+                    <h2>Classificator Data</h2>
+                    <div className="classificator-data">
+                        <ModelDetails data={modelData}  validateButton={userData['admin']} modelID={id} /> 
+                    </div>
+                </Col>
+                <Col>
+                    <h2>Classes</h2>
+                    <PredictionClassesList classes={modelData['classesIDs']}/>
+                </Col>
+            </Row>
             <br/>
-            <ModelDetails data={modelData}  validateButton={userData['admin']} modelID={id}/> 
-            <br/>
-            {userData['admin'] == true && 
-                <DatasetList datasets ={datasetsData} modelID={id} activatedDatasets={modelData['datasets']}></DatasetList>
-            }
-            <br/>
-            {userData['admin'] == true && <Button onClick={downloadZip}>Download</Button>}
+            <Row>
+                {modelData['history'] != null && <LineChart chartData={loadChart()} charOptions={options()}></LineChart>}
+            </Row>
+            <Row>
+                <Col>
+                {userData['admin'] == true && 
+                <div className="classificator-data">
+                    <div className="validate-button">
+                        <p>Dataset Validation</p>
+                        <DatasetList datasets ={datasetsData} modelID={id} activatedDatasets={modelData['datasets']}></DatasetList>
+                        <br/>
+                        <Button onClick={downloadZip}>Download</Button>
+                    </div>
+                </div>
+
+                }
+                </Col>
+                <Col></Col>
+            </Row>
         </div>
         }
 

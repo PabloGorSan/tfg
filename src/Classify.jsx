@@ -4,6 +4,7 @@ import Image from 'react-bootstrap/Image'
 import useFetch from "./components/useFetch";
 import { ClassifierList } from "./components/ClassifierList";
 import {useNavigate} from "react-router-dom"
+import { PredictionClass } from "./components/PredictionClass";
 
 export default function Classify() {
 
@@ -16,7 +17,6 @@ export default function Classify() {
 	const [isModelPicked, setIsModelPicked] = useState(false)
 
     const [classificationResult, setClassificationResult] = useState()
-    const [isClassified, setIsClassified] = useState(false)
 
     const { data: modelsFetch, errorModel, isPendingModel } = useFetch('http://127.0.0.1:5000/findAllowedModels/'+localStorage['user']+"?forceValidated=true")
 
@@ -43,67 +43,68 @@ export default function Classify() {
             }
         )
         .then(response => response.json())
-        .then(data => navigate("/classDetails/"+data['classID'], {state:data}))
+        .then(data => setClassificationResult(data))
+        
+        //.then(data => navigate("/classDetails/"+data['classID'], {state:data}))
 
     }
 
-    function handleClassificationResult(data){
-        setClassificationResult(data)
-        setIsClassified(true)
-    }
 
     return(
         <Fragment>
-            <h2>Classify</h2>
-            <Container>
+            <h1>Classify</h1>
+            <Row>
+
+            <Col>
+            <Container id = "classify-container">
                 <Row>
+                    <p>Here you can classify one image of your system using one of the classificators that are uploaded to the app.</p>
+                    <p>If you want more information about them, go to the search option and select one to see it.</p>
                     <Col>
-                    <h3>Select an image</h3>
+                    <h3>1. Select an image</h3>
                     <div>
                         <input type="file" name="image" accept="image/*" onChange={changeHandler} />
-                        {isImagePicked ? (
+                        {isImagePicked &&
                             <div>
                                 <Image src={URL.createObjectURL(selectedImage)} height={200} width={200} />
-                            </div>
-                        ) : (
-                            <p>Select an image to upload</p>
-                        )}
+                            </div>                        
+                        }
                     </div>
                     </Col>
 
                 </Row>
-                <Row>
+                <Row id = "classify-row">
                     <Col>
                     {isImagePicked && (
                         <div>
-                            <h3>Select a model</h3>
+                            <h3>2. Select a classificator</h3>
                             <ClassifierList models={modelsFetch} clickAction={changeModelHandler}/>
                         </div>
                     )}
                     </Col>
                 </Row>
-                <Row>
+                <Row id = "classify-row">
                     <Col>
                     {isModelPicked && (
                         <div>
-                            <h3>Selected model is {selectedModel.name}. Select your custom attributes</h3>
-                            <p>Click this button to begin the classification</p>
+                            <h3>3. Selected model is {selectedModel.name}. </h3>
                             <Button onClick={submitClassify}>Classify</Button>
                         </div>
                     )}
                     </Col>
                 </Row>
-                <Row>
-                    <Col>
-                    {isClassified && (
-                        <div>
-                            <p>El resultado es: {classificationResult["result"]}</p>
-                        </div>
-                    )}
-                    </Col>
-                </Row>
             </Container>
-            
+            </Col>
+            <Col>         
+            <h2>Classification results</h2>
+            {classificationResult &&
+            <div>
+                <PredictionClass id={classificationResult['classID']}/>
+                
+            </div>
+            }
+            </Col>          
+            </Row>
         </Fragment>
     )
 }

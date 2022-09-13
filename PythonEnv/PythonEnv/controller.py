@@ -47,6 +47,10 @@ def findImageByName(nameImage):
 def findModelsByUid(uid):
     return business.findModelsByUid(str(uid))
 
+@app.route("/findPublicModels")
+def findPublicModels():
+    return business.findPublicModels()
+
 @app.route("/findAllowedModels/<uid>")
 def findAllowedModels(uid):
     return business.findAllowedModels(str(uid),request.args.to_dict())
@@ -75,19 +79,15 @@ def trainModel():
         return business.trainModel(request.form)
 
 
-@app.route('/uploadAlgorithm', methods=['GET', 'POST'])
+@app.route('/uploadAlgorithm', methods=['POST'])
 def uploadAlgorithm():
-    if request.method == 'GET':
-        return render_template('subirAlgoritmo.html')
-    elif request.method == 'POST':
+    if request.method == 'POST':
         return business.uploadAlgorithm(request.files, request.form, PATH_ALGORITHMS)
 
 
-@app.route('/uploadModel', methods=['GET', 'POST'])
+@app.route('/uploadModel', methods=['POST'])
 def uploadModel():
-    if request.method == 'GET':
-        return render_template('subirModelo.html')
-    elif request.method == 'POST':
+    if request.method == 'POST':
         return business.uploadModel(request.files, request.form, PATH_MODELS)
 
 
@@ -96,10 +96,10 @@ def updloadImage():
     if request.method == 'POST':
         return business.uploadImage(request.files, PATH_IMAGES)
 
-@app.route('/filterAlgorithms', methods=['POST'])
-def filterAlgorithms():
+@app.route('/filterModels', methods=['POST'])
+def filterModels():
     if request.method == 'POST':
-        return business.filterAlgorithms(request.form)
+        return business.filterModels(request.form)
 
 @app.route('/changeValidation', methods=['GET'])
 def changeValidation():

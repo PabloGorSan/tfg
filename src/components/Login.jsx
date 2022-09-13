@@ -29,7 +29,7 @@ export function Login() {
         .then(data => {
             localStorage.setItem("user", data['id'])
             if(data['admin']) {
-                navigate("/admin/main")
+                navigate("/admin")
                 window.location.reload()
             } else {
                 navigate("/main")
@@ -66,7 +66,7 @@ export function Login() {
 
     return(
         <Fragment>
-            <Button onClick={signWithGoogle}>Logueate</Button>
+            <Button onClick={signWithGoogle}>Log in</Button>
         </Fragment>
     )
 }

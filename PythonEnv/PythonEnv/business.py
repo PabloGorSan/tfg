@@ -33,6 +33,8 @@ def findClassByID(idClass):
     return dataService.findClass(idClass)
 
 def findUserByID(uid):
+    if uid == "null":
+        return {"admin" : False}
     return dataService.findUser(uid).to_dict()
 
 def findImageByID(id):
@@ -49,7 +51,13 @@ def findImageByName(name):
     return image
 
 def findModelsByUid(uid):
-    return collectionToJSON(dataService.findModelsByUid(uid))
+    if uid == "null" :
+        return []
+    else :
+        return collectionToJSON(dataService.findModelsByUid(uid))
+
+def findPublicModels():
+    return collectionToJSON(dataService.findPublicModels())
 
 def findAllowedModels(uid, args):
     allowed = []
@@ -60,44 +68,6 @@ def findAllowedModels(uid, args):
             allowed.append(resp)
     return jsonify(allowed)
 
-def clasificarUsandoAlgoritmo(idAlg, idFoto):
-    algDic = dataService.findAlgorithm(idAlg)
-    comp = './.venv/Scripts/python'
-    path = './algoritmoClasificacion/' + algDic['filename']
-    param = idFoto
-
-    url = comp + ' ' + path + ' ' + param
-    
-    p = subprocess.Popen(url,
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True)
-
-    out,err=p.communicate()
-    p.stdin.close()
-    return out
-
-#No esta en uso ahora mismo
-def clasificarUsandoModelo(idMod, idFoto):
-    #Cargar el modelo
-    modDic = dataService.findModel(idMod)
-    new_model = tf.keras.models.load_model('./modelos/' + modDic['nombre'])
-
-    #Cargar la imagen a clasificar
-    imageData = dataService.findImage(idFoto)
-    image = imageio.imread('./imagenes/'+imageData["name"])
-
-    #Ajustar la imagen a los parametros de entrada del modelo
-    image = tf.image.resize(image,(28,28))
-    image = tfio.experimental.color.rgb_to_grayscale(image)
-
-    image = (np.expand_dims(image,0))
-
-    #Clasificacion
-    predictions_single = new_model.predict(image)
-    dict = {"result" : str(np.argmax(predictions_single[0]))}
-    return jsonify(dict)
 
 def classifyUsingModel(files, idMod):
     #Cargar la imagen a clasificar
@@ -131,15 +101,29 @@ def classifyUsingModel(files, idMod):
 
 def trainModel(data):
     model = dataService.findModel(data['modelID'])
+    model['trained'] = 2
+    dataService.updateDB(data['modelID'],model,'modelos')
     dataset = dataService.findDataset(data['datasetID'])
     modelPath = "./modelos/"+data['modelID']+"/"+os.listdir("./modelos/"+data['modelID'])[0]
-    savePath = "./modelos/"+data['modelID']+"_v2/"+os.listdir("./modelos/"+data['modelID'])[0]
+    
 
-    history, threshold= tensorflowFunctions.trainModel(data['modelID'], modelPath, savePath, dataset['imagesPath'], dataset['trainPath'], dataset['valPath'], dataset['testPath'])
+    modelTrained, history, threshold= tensorflowFunctions.trainModel(data['modelID'],
+                                                                    modelPath, 
+                                                                    dataset['imagesPath'], 
+                                                                    dataset['trainPath'], 
+                                                                    dataset['valPath'], 
+                                                                    dataset['testPath'])
+    model['trained'] = 0
+    dataService.updateDB(data['modelID'],model,'modelos')
+
     model['classesIDs'] = dataset['classesIDs']
     model['trained'] = 1
-    model['name'] = model['name']+"_v2"
-    newModelID = dataService.saveModelDB(model, threshold, dataset['classesIDs'])
+    model['validated'] = True
+    model['count'] = model['count'] + 1
+    model['name'] = model['name']+"_v" + str(model['count'])
+    newModelID = dataService.saveModelDB(model, model['count'], model['datasets'], threshold, dataset['classesIDs'])
+    savePath = "./modelos/"+newModelID+"/"+os.listdir("./modelos/"+data['modelID'])[0]
+    modelTrained.save(savePath)
     content = {
         'history' : history
     }
@@ -165,7 +149,7 @@ def uploadModel(files, data, folderPath):
         for i in range(int(data['numberClasses'])):
             classesIDs.append(dataService.saveClassDB(names[i], descs[i]))
 
-    savedID = dataService.saveModelDB(data, threshold, classesIDs)
+    savedID = dataService.saveModelDB(data, 1, [], threshold, classesIDs)
     #Guardar en local
     for file in MultiDict(files):
         fileDataStructure = MultiDict(files).getlist(file)[0]
@@ -197,15 +181,12 @@ def uploadImage(files, folderPath):
     dataService.saveImageDB(secure_filename(file.filename))
     return "OK"
 
-def filterAlgorithms(data):
-    return collectionToJSON(dataService.filterAlgorithms(data))
+def filterModels(data):
+    return collectionToJSON(dataService.filterModels(data))
 
 def loginUser(token, data):
-    
     decodedToken = dataService.verifyFirebaseToken(token)
-    print(decodedToken)
     uid = decodedToken['user_id']
-    print(uid)
 
     doc = dataService.findUser(uid)
     if(doc.exists):

@@ -13,13 +13,15 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import CreateClasses from "./CreateClasses"
 import ClassDetails from "./ClassDetails"
 import Train from "./Train"
-
+import Prueba from "./prueba"
+import LandPage from "./LandPage"
 
 
 ReactDOM.render(
     <BrowserRouter>
     <Routes>
         <Route path="/" element={<App/>}>
+            <Route path="" element={<LandPage/>}/>
             <Route path="main" element={<MainPage/>}/>
             <Route path="classify" element={<Classify/>}/>
             <Route path="upload" element={<Upload/>}/>
@@ -28,9 +30,8 @@ ReactDOM.render(
             <Route path="algorithm/:id" element={<AlgorithmPage/>}/>
             <Route path="createClasses" element={<CreateClasses/>}/>
             <Route path="classDetails/:id" element={<ClassDetails/>}/>
-        </Route>
-        <Route path="/admin/" element={<AppAdmin/>}>
-            <Route path="main" element={<MainPageAdmin/>}/>
+            <Route path="prueba" element={<Prueba/>}/>
+            <Route path="admin" element={<MainPageAdmin/>}/>
         </Route>
     </Routes>
     </BrowserRouter>

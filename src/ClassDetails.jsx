@@ -9,16 +9,11 @@ import { PredictionClass } from "./components/PredictionClass";
 export default function ClassDetails(){
 
     const { id } = useParams()
-    const data = useLocation().state
-    const { data: classData, errorClass, isPendingClass } = useFetch('http://127.0.0.1:5000/findClassByID/' + id.toString())
 
     return(
         <Fragment>
             <h2>Results</h2>
-            {data['result']}
-            {classData &&
-                <PredictionClass data={classData}/>
-            }
+            <PredictionClass id={id}/>
         </Fragment>
     )
 }
