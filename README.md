@@ -1,6 +1,7 @@
 # TFG
 
-Aplicación web que controle algoritmos de clasificación subidos por los usuarios
+Aplicación web que controle algoritmos de clasificación subidos por los usuarios.
+Memoria del TFG: [Ver PDF](./Pablo_Gordillo_Sanchez_Memoria.pdf)
 
 # Contenido
 
